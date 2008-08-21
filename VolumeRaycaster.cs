@@ -37,11 +37,18 @@ namespace VolumeRendering
         public override void Draw(GameTime gameTime)
         {
             effect.CurrentTechnique = effect.Techniques["Technique1"];
-            setupTexGenMatrix(); 
+            setupTexGenMatrix();
 
-            effect.Parameters["World"].SetValue(Matrix.CreateFromYawPitchRoll(_alpha, _alpha/4, _alpha/2));
-            effect.Parameters["View"].SetValue(Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 5.0f), Vector3.Zero,
-                                               Vector3.Up));            
+            Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, _alpha / 4, _alpha / 2);            
+            Matrix view = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 5.0f), Vector3.Zero,
+                                               Vector3.Up);
+            Matrix wvInv = Matrix.Invert(world * view);
+            Vector4 camPosTexSpace = new Vector4(wvInv.Translation, 1);
+            camPosTexSpace = Vector4.Transform(camPosTexSpace, _texGenMatrix);
+
+            effect.Parameters["CamPosTexSpace"].SetValue(camPosTexSpace);
+            effect.Parameters["World"].SetValue(world);
+            effect.Parameters["View"].SetValue(view);            
             effect.Parameters["Projection"].SetValue(Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45),
                 (float)_graphicDevice.Viewport.Width / (float)_graphicDevice.Viewport.Height,
@@ -75,7 +82,7 @@ namespace VolumeRendering
 
         public override void Update(GameTime gameTime)
         {
-            _alpha += 0.5f*(float)gameTime.ElapsedGameTime.TotalSeconds;
+            _alpha += 0.1f*(float)gameTime.ElapsedGameTime.TotalSeconds;
             base.Update(gameTime);
         }
 

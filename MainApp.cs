@@ -19,6 +19,7 @@ namespace VolumeRendering
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         KeyboardState _oldState;
+        private Volume<byte> _sphereVolume;
 
         public MainApp()
         {
@@ -28,10 +29,26 @@ namespace VolumeRendering
 
         protected override void Initialize()
         {
-            Volume<byte> vol = new Volume<byte>(new byte[64, 64, 64]);
-            VolumeRaycaster vrc = new VolumeRaycaster(this, vol);            
+            createSphere();
+            VolumeRaycaster vrc = new VolumeRaycaster(this, _sphereVolume);            
             Components.Add(vrc);
             base.Initialize();
+        }
+
+        private void createSphere()
+        {
+            int dim = 256;
+            Vector3 center = new Vector3(dim / 2, dim / 2, dim / 2);
+            byte[, ,] data = new byte[dim, dim, dim];
+            for (int k = 0; k < dim; k++)
+                for (int j = 0; j < dim; j++)
+                    for (int i = 0; i < dim; i++)
+                    {
+                        Vector3 pos = new Vector3(i, j, k);
+                        byte d = (byte)(pos - center).Length();
+                        data[i, j, k] = d;
+                    }
+            _sphereVolume = new Volume<byte>(data);
         }
 
         protected override void LoadContent()

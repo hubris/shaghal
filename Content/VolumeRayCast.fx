@@ -2,6 +2,7 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 float4x4 TexGenMatrix;
+float4 CamPosTexSpace;
 
 struct VertexShaderInput
 {
@@ -28,8 +29,8 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-  return float4(input.TexCoord.xyz, 1.);
-  //return float4(1, 1, 0, 1);
+  float4 rDir = normalize(input.TexCoord-CamPosTexSpace);
+  return float4(rDir.xyz, 1.);
 }
 
 technique Technique1
