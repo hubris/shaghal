@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Net;
-using Microsoft.Xna.Framework.Storage;
 
 namespace VolumeRendering
 {
@@ -25,30 +18,39 @@ namespace VolumeRendering
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.SynchronizeWithVerticalRetrace = false;
+            IsFixedTimeStep = false;
+
+            Gradient grad = new Gradient();
+            GradientSegment seg = new GradientSegment(0, 0.5f, 1.0f, new Vector4(1, 0, 0, 0), new Vector4(1, 0, 0, 0), GradientSegment.ColorType.HSV_CW, GradientSegment.SegmentType.LINEAR);
+            grad.AddSegment(seg);
+            grad.Eval(0.5f);
+            Color[] cols = grad.GetColors(256);
         }
 
         protected override void Initialize()
         {
             createSphere();
             VolumeRaycaster vrc = new VolumeRaycaster(this, _sphereVolume);            
-            Components.Add(vrc);
+            Components.Add(vrc);           
             base.Initialize();
         }
 
         private void createSphere()
         {
-            int dim = 256;
-            Vector3 center = new Vector3(dim / 2, dim / 2, dim / 2);
-            byte[, ,] data = new byte[dim, dim, dim];
-            for (int k = 0; k < dim; k++)
-                for (int j = 0; j < dim; j++)
-                    for (int i = 0; i < dim; i++)
+            Dim3 dim = new Dim3(256, 256, 256);
+            Vector3 center = new Vector3(dim.Width / 2, dim.Height / 2, dim.Depth / 2);            
+            byte[] data = new byte[dim.Width * dim.Height * dim.Depth];
+            for (int k = 0; k < dim.Depth; k++)
+                for (int j = 0; j < dim.Height; j++)
+                    for (int i = 0; i < dim.Width; i++)
                     {
                         Vector3 pos = new Vector3(i, j, k);
                         byte d = (byte)(pos - center).Length();
-                        data[i, j, k] = d;
+                        data[i + (j + k*dim.Height) * dim.Width] = d;
                     }
-            _sphereVolume = new Volume<byte>(data);
+            _sphereVolume = new Volume<byte>(data, dim);
         }
 
         protected override void LoadContent()

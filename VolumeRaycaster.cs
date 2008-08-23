@@ -1,27 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Net;
-using Microsoft.Xna.Framework.Storage;
 
 namespace VolumeRendering
 {
     class VolumeRaycaster : DrawableGameComponent
     {
         public VolumeRaycaster(Game game, Volume<byte> volume) : base(game)
-        {        
-            _bbox = new BoundingBox(new Vector3(-1), new Vector3(1));            
+        {
+            _bbox = new BoundingBox(new Vector3(-1), new Vector3(1));
             _volume = volume;
             _alpha = 0;
         }
+
+        public BoundingBox bbox
+        {
+            get { return _bbox; }
+            set { _bbox = value; }
+        }
+
+        public Volume<byte> volume
+        {
+            get { return _volume; }
+            set { _volume = value; }
+        }
+
         protected override void LoadContent()
         {
             effect = Game.Content.Load<Effect>("VolumeRayCast");
+            effect.Parameters["VolTexture"].SetValue(_volTexture);            
         }
 
         public override void Initialize()
@@ -30,22 +36,25 @@ namespace VolumeRendering
             _graphicDevice = graphicsservice.GraphicsDevice;
 
             _cube = new Cube(_graphicDevice, bbox);
-
+            _volTexture = new Texture3D(_graphicDevice, _volume.Dim.Width, _volume.Dim.Height, _volume.Dim.Depth, 1, TextureUsage.Linear, SurfaceFormat.Alpha8);
+            _volTexture.SetData<byte>(_volume.Data);                        
             base.Initialize();
         }
         
         public override void Draw(GameTime gameTime)
         {
-            effect.CurrentTechnique = effect.Techniques["Technique1"];
+            effect.CurrentTechnique = effect.Techniques["VolumeRayCast"];
             setupTexGenMatrix();
 
-            Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, _alpha / 4, _alpha / 2);            
+            Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, _alpha / 4, _alpha / 2);
+            //Matrix world = Matrix.Identity;
             Matrix view = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 5.0f), Vector3.Zero,
                                                Vector3.Up);
             Matrix wvInv = Matrix.Invert(world * view);
             Vector4 camPosTexSpace = new Vector4(wvInv.Translation, 1);
             camPosTexSpace = Vector4.Transform(camPosTexSpace, _texGenMatrix);
 
+            effect.Parameters["Alpha"].SetValue(_alpha);
             effect.Parameters["CamPosTexSpace"].SetValue(camPosTexSpace);
             effect.Parameters["World"].SetValue(world);
             effect.Parameters["View"].SetValue(view);            
@@ -55,7 +64,8 @@ namespace VolumeRendering
                 1.0f, 100.0f
                 ));
 
-            _graphicDevice.RenderState.CullMode = CullMode.CullClockwiseFace;
+            _graphicDevice.RenderState.CullMode = CullMode.CullClockwiseFace;            
+
             _cube.Begin();
             effect.Begin();
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -86,21 +96,11 @@ namespace VolumeRendering
             base.Update(gameTime);
         }
 
-        public BoundingBox bbox
-        {
-            get { return _bbox; }
-            set { _bbox = value; }
-        }
-
-        public Volume<byte> volume
-        {
-            get { return _volume; }
-            set { _volume = value; }
-        }
-
         private GraphicsDevice _graphicDevice;
         private BoundingBox _bbox;
+        
         private Volume<byte> _volume;
+        private Texture3D _volTexture;
 
         private Effect effect;
 
@@ -111,3 +111,4 @@ namespace VolumeRendering
         private float _alpha;
     }
 }
+
