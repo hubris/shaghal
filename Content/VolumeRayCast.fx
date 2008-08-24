@@ -13,6 +13,18 @@ sampler volumeSampler = sampler_state
     Texture = <VolTexture>;
     MagFilter = LINEAR; 
     MinFilter = LINEAR; 
+    AddressU = CLAMP;
+    AddressV = CLAMP;
+    AddressW = CLAMP;
+};
+
+texture TransferFunction;
+
+sampler tfSampler = sampler_state
+{
+    Texture = <TransferFunction>;
+    MagFilter = LINEAR; 
+    MinFilter = LINEAR; 
 };
 
 struct VertexShaderInput
@@ -43,19 +55,19 @@ float4 PixelMain(VertexShaderOutput input) : COLOR0
   float3 p = input.TexCoord.xyz;
   float3 rDir = normalize(input.TexCoord-CamPosTexSpace).xyz;
   float4 dest = float4(0, 0, 0, 0);
-  float stepSize = 1./512;
+  float stepSize = 1./128;
 
-  rDir = float3(0, 0, 1);
-  stepSize = 0;
-  while(dest.w<0.95)
+  bool inTexture = (p.z>=0&&p.z<=1)&&(p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1);
+  while(inTexture && dest.w<0.95)
   {
-    float s = tex3Dlod(volumeSampler, float4(p.xyz, 0)).w;
-    s = s>0.6?0:s;
-    float4 src = float4(s, s, s, s);
-    dest.xyz = dest.xyz+(1-dest.w)*src.w*src.xyz;
-    dest.w = dest.w+(1-dest.w)*src.w;
+    float s = tex3Dlod(volumeSampler, float4(p.xyz, 0)).w;    
+    float4 src = tex1Dlod(tfSampler, float4(s, 0, 0, 0));    
+    dest.xyz = dest.xyz+(1-dest.w)*src.xyz;
+    dest.w = dest.w+(1-dest.w)*src.w;    
     p += rDir*stepSize;
+    inTexture = (p.z>=0&&p.z<=1)&&(p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1);
   }
+
   return dest;  
 }
 
@@ -64,10 +76,10 @@ technique VolumeRayCast
     pass Pass1
     {
       AlphaBlendEnable = TRUE;
-      SrcBlend = INVSRCALPHA;
+      SrcBlend = SRCALPHA;
       DestBlend = INVSRCALPHA;
 
-      VertexShader = compile vs_2_0 VertexMain();
+      VertexShader = compile vs_3_0 VertexMain();
       PixelShader = compile ps_3_0 PixelMain();
     }
 }

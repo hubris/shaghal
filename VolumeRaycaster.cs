@@ -10,6 +10,19 @@ namespace VolumeRendering
             _bbox = new BoundingBox(new Vector3(-1), new Vector3(1));
             _volume = volume;
             _alpha = 0;
+
+            IGraphicsDeviceService graphicsservice = (IGraphicsDeviceService)Game.Services.GetService(typeof(IGraphicsDeviceService));
+            _graphicDevice = graphicsservice.GraphicsDevice;
+            _volTexture = new Texture3D(_graphicDevice, _volume.Dim.Width, _volume.Dim.Height, _volume.Dim.Depth, 1, TextureUsage.None, SurfaceFormat.Alpha8);
+            _tfTexture = new Texture2D(_graphicDevice, 256, 1, 1, TextureUsage.None, SurfaceFormat.Color);            
+        }
+
+        public Color[] TransferFunction
+        {
+            set 
+            {                
+                _tfTexture.SetData<Color>(value);
+            }
         }
 
         public BoundingBox bbox
@@ -27,17 +40,14 @@ namespace VolumeRendering
         protected override void LoadContent()
         {
             effect = Game.Content.Load<Effect>("VolumeRayCast");
-            effect.Parameters["VolTexture"].SetValue(_volTexture);            
+            effect.Parameters["VolTexture"].SetValue(_volTexture);
+            effect.Parameters["TransferFunction"].SetValue(_tfTexture);
         }
 
         public override void Initialize()
         {
-            IGraphicsDeviceService graphicsservice = (IGraphicsDeviceService)Game.Services.GetService(typeof(IGraphicsDeviceService));
-            _graphicDevice = graphicsservice.GraphicsDevice;
-
             _cube = new Cube(_graphicDevice, bbox);
-            _volTexture = new Texture3D(_graphicDevice, _volume.Dim.Width, _volume.Dim.Height, _volume.Dim.Depth, 1, TextureUsage.Linear, SurfaceFormat.Alpha8);
-            _volTexture.SetData<byte>(_volume.Data);                        
+            _volTexture.SetData<byte>(_volume.Data);
             base.Initialize();
         }
         
@@ -92,7 +102,14 @@ namespace VolumeRendering
 
         public override void Update(GameTime gameTime)
         {
-            _alpha += 0.1f*(float)gameTime.ElapsedGameTime.TotalSeconds;
+            _alpha += 0.1f*(float)gameTime.ElapsedGameTime.TotalSeconds;            
+            //float offset = 30*(float)gameTime.ElapsedGameTime.TotalSeconds;
+            //if (_alpha >= 256)
+            //{
+            //    _alpha = 0;
+            //}
+            //_alpha += offset;
+                
             base.Update(gameTime);
         }
 
@@ -101,6 +118,7 @@ namespace VolumeRendering
         
         private Volume<byte> _volume;
         private Texture3D _volTexture;
+        private Texture2D _tfTexture;
 
         private Effect effect;
 
@@ -108,7 +126,7 @@ namespace VolumeRendering
 
         private Matrix _texGenMatrix;
 
-        private float _alpha;
+        private float _alpha;        
     }
 }
 
