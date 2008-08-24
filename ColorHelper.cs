@@ -7,6 +7,11 @@ namespace VolumeRendering
 {
     public static class ColorHelper
     {
+        /// <summary>
+        /// Convert RGB color to HSV
+        /// </summary>
+        /// <param name="rgb">RGBA color in [0,1]</param>
+        /// <returns>HSV color with h in [0,360] and s,v in [0,1], alpha is not changed</returns>
         static public Vector4 RgbToHsv(Vector4 rgb)
         {
 
@@ -38,6 +43,11 @@ namespace VolumeRendering
             return hsv;
         }
         
+        /// <summary>
+        /// Convert HSV color into RGB color
+        /// </summary>
+        /// <param name="hsv">HSV color with h in [0,360] and s,v in [0,1]</param>
+        /// <returns>RGBA color in [0,1], alpha is not changed</returns>
         static public Vector4 HsvToRgb(Vector4 hsv)
         {            
             int hi = (int)(hsv.X / 60.0f);

@@ -23,7 +23,13 @@ namespace VolumeRendering
             IsFixedTimeStep = false;
 
             Gradient grad = new Gradient();
-            GradientSegment seg = new GradientSegment(0, 0.5f, 1.0f, new Vector4(1, 0, 0, 0), new Vector4(1, 0, 0, 0), GradientSegment.ColorType.HSV_CW, GradientSegment.SegmentType.LINEAR);
+            GradientSegment seg = new GradientSegment();
+            seg.Left = 0;
+            seg.Middle = 0.5f;
+            seg.Right = 1.0f;
+            seg.LeftColor = Vector4.UnitX;
+            seg.RightColor = Vector4.UnitX;
+            seg.ColType = GradientSegment.ColorType.HSV_CW;               
             grad.AddSegment(seg);
             grad.Eval(0.5f);
             Color[] cols = grad.GetColors(256);
