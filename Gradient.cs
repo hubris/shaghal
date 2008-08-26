@@ -196,10 +196,35 @@ namespace VolumeRendering
 
     class Gradient
     {
+        public Gradient()
+        {
+            _min = 0;
+            _max = 1;
+        }
+
         public void AddSegment(GradientSegment seg)
         {
             _segments.Add(seg);
             _segments.Sort();
+        }
+
+        /// <summary>
+        /// Eval will return (0,0,0,0) for all position inferior to Min and
+        /// the gradient will be compressed between Min and Max
+        /// </summary>
+        public float Min
+        {
+            get { return _min; }
+            set { _min = value; }
+        }
+        /// <summary>
+        /// Eval will return (0,0,0,0) for all position superior to Max
+        /// and the gradient willbe compressed between Min and Max
+        /// </summary>
+        public float Max
+        {
+            get { return _max; }
+            set { _max = value; }
         }
 
         public Color[] GetColors(uint width)
@@ -210,7 +235,7 @@ namespace VolumeRendering
             for (int i = 0; i < width; i++)
             {
                 Vector4 c = Eval(x) * 255.0f;
-                colors[i] = new Color((byte)c.X, (byte)c.Y, (byte)c.Z, (byte)c.W);
+                colors[i] = new Color((byte)c.X, (byte)c.Y, (byte)c.Z, (byte)c.W);                
                 x += dx;
             }
 
@@ -220,6 +245,10 @@ namespace VolumeRendering
         public Vector4 Eval(float pos)
         {
             pos = MathHelper.Clamp(pos, 0, 1);
+            if (pos < _min || pos > _max || _min == _max )
+                return new Vector4(0, 0, 0, 0);
+
+            pos = (pos - _min) / (_max - _min);
             GradientSegment seg = GetSegment(pos);
             return seg.Eval(pos);
         }
@@ -231,7 +260,10 @@ namespace VolumeRendering
                 throw new System.IndexOutOfRangeException("Position is out of the gradient");
             return _segments[i];
         }
-
+        
         private List<GradientSegment> _segments = new List<GradientSegment>();
+
+        private float _max;
+        private float _min;
     }
 }

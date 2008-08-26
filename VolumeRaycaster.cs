@@ -20,7 +20,10 @@ namespace VolumeRendering
         public Color[] TransferFunction
         {
             set 
-            {                
+            {
+                _graphicDevice.Textures[0] = null;
+                _graphicDevice.Textures[1] = null;
+                _graphicDevice.Textures[2] = null;
                 _tfTexture.SetData<Color>(value);
             }
         }
@@ -63,6 +66,9 @@ namespace VolumeRendering
             Matrix wvInv = Matrix.Invert(world * view);
             Vector4 camPosTexSpace = new Vector4(wvInv.Translation, 1);
             camPosTexSpace = Vector4.Transform(camPosTexSpace, _texGenMatrix);
+
+            effect.Parameters["VolTexture"].SetValue(_volTexture);
+            effect.Parameters["TransferFunction"].SetValue(_tfTexture);
 
             effect.Parameters["Alpha"].SetValue(_alpha);
             effect.Parameters["CamPosTexSpace"].SetValue(camPosTexSpace);

@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="ColorHelper.cs" />
     <Compile Include="Cube.cs" />
+    <Compile Include="DatReader.cs" />
     <Compile Include="Gradient.cs" />
     <Compile Include="GradientEditor.cs">
       <SubType>Form</SubType>

@@ -23,8 +23,8 @@ texture TransferFunction;
 sampler tfSampler = sampler_state
 {
     Texture = <TransferFunction>;
-    MagFilter = LINEAR; 
-    MinFilter = LINEAR; 
+    MagFilter = POINT; 
+    MinFilter = POINT; 
 };
 
 struct VertexShaderInput
@@ -55,17 +55,19 @@ float4 PixelMain(VertexShaderOutput input) : COLOR0
   float3 p = input.TexCoord.xyz;
   float3 rDir = normalize(input.TexCoord-CamPosTexSpace).xyz;
   float4 dest = float4(0, 0, 0, 0);
-  float stepSize = 1./128;
+  float stepSize = 1./256;
 
-  bool inTexture = (p.z>=0&&p.z<=1)&&(p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1);
+  bool inTexture = (p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1)&&(p.z>=0&&p.z<=1);
   while(inTexture && dest.w<0.95)
   {
-    float s = tex3Dlod(volumeSampler, float4(p.xyz, 0)).w;    
-    float4 src = tex1Dlod(tfSampler, float4(s, 0, 0, 0));    
-    dest.xyz = dest.xyz+(1-dest.w)*src.xyz;
-    dest.w = dest.w+(1-dest.w)*src.w;    
-    p += rDir*stepSize;
-    inTexture = (p.z>=0&&p.z<=1)&&(p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1);
+    while(inTexture && dest.w<0.95)
+    {
+      float s = tex3Dlod(volumeSampler, float4(p.xyz, 0)).w;    
+      float4 src = tex1Dlod(tfSampler, float4(s, 0, 0, 0));      
+      dest = dest+(1-dest.w)*src;
+      p += rDir*stepSize;
+      inTexture = (p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1)&&(p.z>=0&&p.z<=1);            
+    }
   }
 
   return dest;  
