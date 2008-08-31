@@ -11,11 +11,11 @@ namespace VolumeRendering
             _volume = volume;
             _alpha = 0;
 
-            IGraphicsDeviceService graphicsservice = (IGraphicsDeviceService)Game.Services.GetService(typeof(IGraphicsDeviceService));
+            IGraphicsDeviceService graphicsservice = Game.Services.GetService(typeof(IGraphicsDeviceService)) as IGraphicsDeviceService;
             _graphicDevice = graphicsservice.GraphicsDevice;
             _volTexture = new Texture3D(_graphicDevice, _volume.Dim.Width, _volume.Dim.Height, _volume.Dim.Depth, 1, TextureUsage.None, SurfaceFormat.Alpha8);
             _tfTexture = new Texture2D(_graphicDevice, 256, 1, 1, TextureUsage.None, SurfaceFormat.Color);
-            _tfPreIntTexture = new Texture2D(_graphicDevice, 256, 256, 1, TextureUsage.None, SurfaceFormat.Color);            
+            _tfPreIntTexture = new Texture2D(_graphicDevice, 256, 256, 1, TextureUsage.None, SurfaceFormat.Color);                    
         }
 
         public Color[] TransferFunction
@@ -39,6 +39,12 @@ namespace VolumeRendering
                 _graphicDevice.Textures[3] = null;
                 _tfPreIntTexture.SetData<Color>(value.PreIntTable);
             }
+        }
+
+        public Camera Camera
+        {
+            get { return _camera; }
+            set { _camera = value; }
         }
 
         public BoundingBox bbox
@@ -73,13 +79,12 @@ namespace VolumeRendering
         public override void Draw(GameTime gameTime)
         {
             effect.CurrentTechnique = effect.Techniques["VolumeRayCast"];
+            //effect.CurrentTechnique = effect.Techniques["VolumeRayCastNoPreInt"];
+
             setupTexGenMatrix();
 
-            //Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, _alpha / 4, _alpha / 2);
-            Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, MathHelper.Pi/2.0f, 0);
-            //Matrix world = Matrix.Identity;
-            Matrix view = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 5.0f), Vector3.Zero,
-                                               Vector3.Up);
+            Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, MathHelper.Pi / 2.0f, 0);
+            Matrix view = _camera.View;
             Matrix wvInv = Matrix.Invert(world * view);
             Vector4 camPosTexSpace = new Vector4(wvInv.Translation, 1);
             camPosTexSpace = Vector4.Transform(camPosTexSpace, _texGenMatrix);
@@ -91,12 +96,8 @@ namespace VolumeRendering
             effect.Parameters["Alpha"].SetValue(_alpha);
             effect.Parameters["CamPosTexSpace"].SetValue(camPosTexSpace);
             effect.Parameters["World"].SetValue(world);
-            effect.Parameters["View"].SetValue(view);            
-            effect.Parameters["Projection"].SetValue(Matrix.CreatePerspectiveFieldOfView(
-                MathHelper.ToRadians(45),
-                (float)_graphicDevice.Viewport.Width / (float)_graphicDevice.Viewport.Height,
-                1.0f, 100.0f
-                ));
+            effect.Parameters["View"].SetValue(_camera.View);            
+            effect.Parameters["Projection"].SetValue(_camera.Projection);
 
             _graphicDevice.RenderState.CullMode = CullMode.CullClockwiseFace;            
 
@@ -149,6 +150,8 @@ namespace VolumeRendering
                 
             base.Update(gameTime);
         }
+
+        private Camera _camera;
 
         private GraphicsDevice _graphicDevice;
         private BoundingBox _bbox;

@@ -1,30 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using Microsoft.Xna.Framework;
+using System.Globalization;
 
 namespace VolumeRendering
 {
     class DatReader
     {
+        private bool _read = false;
         private string _fileName;
         private Dim3 _dim;
         private byte[] _data;
+        private Vector3 _sliceThickness;
 
         public string Filename
         {
             get { return _fileName; }
-            set { _fileName = value; }
+            set 
+            {
+                _read = _fileName != value;
+                _fileName = value; 
+            }
         }
 
         public byte[] Data
         {
-            get { return _data; }
+            get 
+            {
+                Read();
+                return _data; 
+            }
         }
 
         public Dim3 Dim
         {
-            get { return _dim; }
+            get 
+            {
+                Read();
+                return _dim; 
+            }
+        }
+
+        public Vector3 SliceThickness
+        {
+            get 
+            {
+                Read();
+                return _sliceThickness; 
+            }
         }
 
         public DatReader(string filename)
@@ -32,8 +55,10 @@ namespace VolumeRendering
             _fileName = filename;
         }
 
-        public void Read()
-        {            
+        private void Read()
+        {
+            if (_read)
+                return;
             try 
             {                
                 using (StreamReader sr = new StreamReader(_fileName)) 
@@ -46,6 +71,12 @@ namespace VolumeRendering
                             string[] split = line.Split(null);
                             _dim = new Dim3(Convert.ToInt32(split[1]), Convert.ToInt32(split[2]), Convert.ToInt32(split[3]));
                         }
+                        if (line.Contains("SliceThickness"))
+                        {
+                            CultureInfo culture = CultureInfo.GetCultureInfo("en-US");
+                            string[] split = line.Split(null);
+                            _sliceThickness = new Vector3(float.Parse(split[1], culture), float.Parse(split[2], culture), float.Parse(split[3], culture));
+                        }
                     }
                 }
 
@@ -55,13 +86,14 @@ namespace VolumeRendering
                 _data = binReader.ReadBytes(_dim.Width * _dim.Height * _dim.Depth);
                 binReader.Close();
                 fs.Close();
+                _read = true;
             }
             catch (Exception e) 
             {
                 // Let the user know what went wrong.
                 Console.WriteLine("The file could not be read:");
                 Console.WriteLine(e.Message);
-            }
+            }            
         }
     }
 }

@@ -42,7 +42,20 @@ namespace VolumeRendering
 
             return hsv;
         }
-        
+
+        /// <summary>
+        /// Convert RGB color to HSV
+        /// </summary>
+        /// <param name="r">Red component in [0,1]</param>
+        /// <param name="g">Green component in [0,1]</param>
+        /// <param name="b">Blue component in [0,1]</param>
+        /// <param name="a">Alpha component in [0,1]</param>
+        /// <returns>HSV color with h in [0,360] and s,v in [0,1], alpha is not changed</returns>
+        static public Vector4 RgbToHsv(float r, float g, float b, float a)
+        {
+            return ColorHelper.RgbToHsv(new Vector4(r, g, b, a));
+        }
+
         /// <summary>
         /// Convert HSV color into RGB color
         /// </summary>
@@ -74,6 +87,19 @@ namespace VolumeRendering
                     Debug.Assert(false);
                     return new Vector4(0, 0, 0, 0);                                    
             }
+        }
+        
+        /// <summary>
+        /// Convert HSV color into RGB color
+        /// </summary>
+        /// <param name="h">h in [0,360]</param>
+        /// <param name="s">s in [0,1]</param>
+        /// <param name="v">v in [0,1]</param>
+        /// <param name="a">a in [0,1]</param>
+        /// <returns>RGBA color in [0,1], alpha is not changed</returns>
+        static public Vector4 HsvToRgb(float h, float s, float v, float a)
+        {
+            return HsvToRgb(new Vector4(h, s, v, a));
         }
 
     }

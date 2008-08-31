@@ -14,6 +14,7 @@ namespace VolumeRendering
             RGB = 0,
             HSV_CCW,
             HSV_CW,
+            LOOKUP
         }
         
         public enum SegmentType
@@ -22,7 +23,7 @@ namespace VolumeRendering
             CURVED,
             SINE,
             SPHERE_INCREASING,
-            SPHERE_DECREASING
+            SPHERE_DECREASING            
         }
 
         public GradientSegment(float left, float middle, float right, 
@@ -47,6 +48,15 @@ namespace VolumeRendering
             _RightColor = Vector4.One;
             _ColType = ColorType.RGB;
             _SegType = SegmentType.LINEAR;
+        }
+
+        public Color[] LookUpTable
+        {
+            set 
+            {
+                _ColType = ColorType.LOOKUP;
+                _lookUp = value; 
+            }            
         }
 
         public float Left
@@ -116,6 +126,12 @@ namespace VolumeRendering
 
             if (_ColType == GradientSegment.ColorType.RGB)
                 return _LeftColor * (1 - factor) + factor * _RightColor;
+
+            if (_ColType == GradientSegment.ColorType.LOOKUP)
+            {
+                int idx = (int)MathHelper.Clamp(_lookUp.Length * factor, 0, 255);
+                return _lookUp[idx].ToVector4();                
+            }
 
             Vector4 leftHsv = ColorHelper.RgbToHsv(_LeftColor);
             Vector4 rightHsv = ColorHelper.RgbToHsv(_RightColor);
@@ -192,6 +208,7 @@ namespace VolumeRendering
         private Vector4 _RightColor;
         private ColorType _ColType;
         private SegmentType _SegType;
+        private Color[] _lookUp;
     }
 
     class Gradient

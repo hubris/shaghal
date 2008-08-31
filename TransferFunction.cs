@@ -9,6 +9,7 @@ namespace VolumeRendering
         private Color[] _colors;
         private Color[] _preIntTable = new Color[256*256];
         private readonly float _stepSize = 0.05f;
+        private float _sliceDist = 1.0f;
 
         public Color[] Colors
         {
@@ -25,10 +26,9 @@ namespace VolumeRendering
         /// </summary>
         public void preIntegrate()
         {
-            int offset = 0;
             for(int front = 0; front < 256; front++)
-                for (int back = 0; back < 256; back++)                
-                    _preIntTable[offset++] = computeColor(1, front, back);                
+                for (int back = front; back < 256; back++)
+                    _preIntTable[back * 256 + front] = _preIntTable[front * 256 + back] = computeColor(1, front, back);                    
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace VolumeRendering
                 int colIdx = (int)s;                
                 alpha += _colors[colIdx].A;
             }
-            alpha *= _stepSize * 1.0f / 255.0f;
+            alpha *= _stepSize * 1.0f / 255.0f * _sliceDist;
             return (float)Math.Exp(-alpha);
         }
     }
