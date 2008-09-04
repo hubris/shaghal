@@ -83,7 +83,8 @@ namespace VolumeRendering
 
             setupTexGenMatrix();
 
-            Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, MathHelper.Pi / 2.0f, 0);
+            //Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, 0*MathHelper.Pi / 2.0f, 0);
+            Matrix world = Matrix.Identity;
             Matrix view = _camera.View;
             Matrix wvInv = Matrix.Invert(world * view);
             Vector4 camPosTexSpace = new Vector4(wvInv.Translation, 1);

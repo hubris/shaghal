@@ -29,7 +29,7 @@ namespace VolumeRendering
             : base(game)
         {
             game.Services.AddService(typeof(MouseManager), this);
-            _prevMouseState = Mouse.GetState();
+            _mouseState = _prevMouseState = Mouse.GetState();
         }
 
         public override void Update(GameTime gameTime)

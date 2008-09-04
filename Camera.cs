@@ -4,10 +4,11 @@ using Microsoft.Xna.Framework.Graphics;
 namespace VolumeRendering
 {
     class Camera : GameComponent
-    {        
-        private Matrix _view;
-        private Matrix _projection;
-        private GraphicsDevice _graphics;
+    {
+        protected Game _game;
+        protected Matrix _view = new Matrix();
+        protected Matrix _projection = new Matrix();
+        protected GraphicsDevice _graphics;
 
         private float _zNear;
         private float _zFar;
@@ -16,6 +17,12 @@ namespace VolumeRendering
         protected Vector3 _position = new Vector3(0.0f, 0.0f, 1.0f);
         protected Vector3 _target = Vector3.Zero;
         protected Vector3 _up = Vector3.Up;
+
+        protected float _yaw = 0;
+        protected float _pitch = 0;
+        protected float _roll = 0;
+
+        protected Quaternion _orientation = new Quaternion(0, 0, 0, 1);
 
         public Matrix Projection
         {
@@ -47,6 +54,7 @@ namespace VolumeRendering
             _zNear = zNear;
             _zFar = zFar;
             _fov = fov;
+            _game = game;
         }
 
         public override void Initialize()
@@ -60,7 +68,15 @@ namespace VolumeRendering
             float aspectRatio = (float)_graphics.Viewport.Width / (float)_graphics.Viewport.Height;
             _projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(_fov), aspectRatio,
                                                               _zNear, _zFar);
-            _view = Matrix.CreateLookAt(_position, _target, _up);
+
+            Quaternion qPitch = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(_pitch));
+            Quaternion qYaw = Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathHelper.ToRadians(_yaw));
+            _orientation = qYaw*qPitch;
+
+            _orientation.Normalize();
+            _view = Matrix.CreateFromQuaternion(_orientation);
+            _view.Translation = _position;
+            Matrix.Invert(ref _view, out _view);
         }
 
         public override void Update(GameTime gameTime)

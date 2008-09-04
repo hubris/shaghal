@@ -9,7 +9,7 @@ namespace VolumeRendering
     /// This is the main type for your game
     /// </summary>
     public class MainApp : Microsoft.Xna.Framework.Game, IMouseListener, IKeyboardListener
-    {
+    {        
         GraphicsDeviceManager graphics;
         private Volume<byte> _volume;
         GradientEditor _gradEditor;
@@ -29,7 +29,7 @@ namespace VolumeRendering
         Vector2 curPos;
 
         public MainApp()
-        {
+        {            
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
@@ -65,7 +65,7 @@ namespace VolumeRendering
             Components.Add(_mouseManager);
             _mouseManager.AddListener(this);
 
-            _camera = new CameraFirstPerson(this, 45, 0.001f, 100.0f);
+            _camera = new CameraFirstPerson(this, 45, 0.0001f, 100.0f);
             _camera.Position = new Vector3(0, 0, 5);
             Components.Add(_camera);
 
