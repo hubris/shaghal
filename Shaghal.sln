@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shaghal", "ShaghalCore\Shaghal.csproj", "{A0FC9B78-85FC-4DBD-A31D-6725E58B01EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VolumeRendering", "Tests\VolumeRendering\VolumeRendering.csproj", "{CAD4822D-60BD-4FF7-8515-88BC71EAB161}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A0FC9B78-85FC-4DBD-A31D-6725E58B01EC}.Debug|x86.ActiveCfg = Debug|x86
+		{A0FC9B78-85FC-4DBD-A31D-6725E58B01EC}.Debug|x86.Build.0 = Debug|x86
+		{A0FC9B78-85FC-4DBD-A31D-6725E58B01EC}.Release|x86.ActiveCfg = Release|x86
+		{A0FC9B78-85FC-4DBD-A31D-6725E58B01EC}.Release|x86.Build.0 = Release|x86
+		{0624E65C-8F13-44F1-B40F-F8FCA12EF001}.Debug|x86.ActiveCfg = Debug|x86
+		{0624E65C-8F13-44F1-B40F-F8FCA12EF001}.Release|x86.ActiveCfg = Release|x86
+		{CAD4822D-60BD-4FF7-8515-88BC71EAB161}.Debug|x86.ActiveCfg = Debug|x86
+		{CAD4822D-60BD-4FF7-8515-88BC71EAB161}.Debug|x86.Build.0 = Debug|x86
+		{CAD4822D-60BD-4FF7-8515-88BC71EAB161}.Release|x86.ActiveCfg = Release|x86
+		{CAD4822D-60BD-4FF7-8515-88BC71EAB161}.Release|x86.Build.0 = Release|x86
+		{628AD7F4-4A81-4455-BA48-B1772DFCF709}.Debug|x86.ActiveCfg = Debug|x86
+		{628AD7F4-4A81-4455-BA48-B1772DFCF709}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
