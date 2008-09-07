@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace VolumeRendering
+namespace Shaghal
 {
-    class VolumeRaycaster : DrawableGameComponent
+    public class VolumeRaycaster : DrawableGameComponent
     {
         public VolumeRaycaster(Game game, Volume<byte> volume) : base(game)
         {
@@ -39,6 +39,24 @@ namespace VolumeRendering
                 _graphicDevice.Textures[3] = null;
                 _tfPreIntTexture.SetData<Color>(value.PreIntTable);
             }
+        }
+
+        /// <summary>
+        /// Define step size. Default is 1/256.
+        /// </summary>
+        public float StepSize
+        {
+            set { _stepSize = value; }
+            get { return _stepSize; }
+        }
+
+        /// <summary>
+        /// If true use preintegration. Default is true.
+        /// </summary>
+        public bool PreIntegration
+        {
+            set { _preint = value; }
+            get { return _preint; }
         }
 
         public Camera Camera
@@ -78,18 +96,20 @@ namespace VolumeRendering
         
         public override void Draw(GameTime gameTime)
         {
-            effect.CurrentTechnique = effect.Techniques["VolumeRayCast"];
-            //effect.CurrentTechnique = effect.Techniques["VolumeRayCastNoPreInt"];
+            string technique = _preint?"VolumeRayCastPreIntegration":"VolumeRayCastNoPreIntegration";
+            effect.CurrentTechnique = effect.Techniques[technique];
 
             setupTexGenMatrix();
 
-            //Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, 0*MathHelper.Pi / 2.0f, 0);
-            Matrix world = Matrix.Identity;
+            Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, 0*MathHelper.Pi / 2.0f, 0);
+            //Matrix world = Matrix.CreateFromYawPitchRoll(MathHelper.Pi / 2, MathHelper.Pi / 2, 0);
+            //Matrix world = Matrix.Identity;
             Matrix view = _camera.View;
             Matrix wvInv = Matrix.Invert(world * view);
             Vector4 camPosTexSpace = new Vector4(wvInv.Translation, 1);
             camPosTexSpace = Vector4.Transform(camPosTexSpace, _texGenMatrix);
 
+            effect.Parameters["StepSize"].SetValue(_stepSize);
             effect.Parameters["VolTexture"].SetValue(_volTexture);
             effect.Parameters["TransferFunction"].SetValue(_tfTexture);
             effect.Parameters["TransferFunctionPreInt"].SetValue(_tfPreIntTexture);
@@ -171,6 +191,10 @@ namespace VolumeRendering
         private float _alpha;
 
         SpriteBatch _spriteBatch;
+
+        private float _stepSize = 1.0f/256.0f;
+
+        private bool _preint = true;
     }
 }
 

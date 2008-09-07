@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System;
 
-namespace VolumeRendering
+namespace Shaghal
 {
-    class GradientSegment : IComparable<GradientSegment>
+    public class GradientSegment : IComparable<GradientSegment>
     {
         public delegate float ComputeBlendFactorFunc(float pos, float middle);
         
@@ -211,7 +211,7 @@ namespace VolumeRendering
         private Color[] _lookUp;
     }
 
-    class Gradient
+    public class Gradient
     {
         public Gradient()
         {

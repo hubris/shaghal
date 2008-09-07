@@ -5,11 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("VolumeRendering")]
-[assembly: AssemblyProduct("VolumeRendering")]
+[assembly: AssemblyTitle("Shaghal")]
+[assembly: AssemblyProduct("Shaghal")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("")]
-
 [assembly: AssemblyCopyright("Copyright ©  2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,8 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("45934ff0-0e9a-4eb1-9fc4-d4778504e9cf")]
-
+[assembly: Guid("1f3c9356-1e78-48a1-89c1-e5023344e92c")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -3,6 +3,7 @@ float4x4 View;
 float4x4 Projection;
 float4x4 TexGenMatrix;
 float4 CamPosTexSpace;
+float StepSize;
 
 float Alpha;
 
@@ -62,14 +63,14 @@ VertexShaderOutput VertexMain(VertexShaderInput input)
     return output;
 }
 
-float4 PixelMain(VertexShaderOutput input) : COLOR0
+//Volume rendering with preintegration
+float4 PixelMainPreIntegration(VertexShaderOutput input) : COLOR0
 {
   float3 p = input.TexCoord.xyz;
   float3 rDir = normalize(input.TexCoord-CamPosTexSpace).xyz;
   float4 dest = float4(0, 0, 0, 0);
-  const float stepSize = 1./512.0f;
   float4 voxel = float4(0, 0, 0, 0);
-  float3 stepDir = stepSize*rDir;
+  float3 stepDir = StepSize*rDir;
 
   bool inTexture = (p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1)&&(p.z>=0&&p.z<=1);
   while(inTexture && dest.w<0.95)
@@ -78,12 +79,8 @@ float4 PixelMain(VertexShaderOutput input) : COLOR0
     {      
       voxel.x = tex3Dlod(volumeSampler, float4(p.xyz, 0)).w;      
       float4 src = tex2Dlod(tfPreIntSampler, voxel);      
-      voxel.y = voxel.x;      
-      
-    dest = dest+(1-dest.w)*src;   
-//      dest.xyz = dest.xyz+(1-dest.w)*src.xyz*src.w;      
-//     dest.w = dest.w+(1-dest.w)*src.w;      
-
+      voxel.y = voxel.x; 
+      dest = dest+(1-dest.w)*src;   
       p += stepDir;
       inTexture = (p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1)&&(p.z>=0&&p.z<=1);            
     }
@@ -92,13 +89,13 @@ float4 PixelMain(VertexShaderOutput input) : COLOR0
   return dest;  
 }
 
-float4 PixelMainNoPreInt(VertexShaderOutput input) : COLOR0
+//Volume rendering without preintegration
+float4 PixelMainNoPreIntegration(VertexShaderOutput input) : COLOR0
 {
   float3 p = input.TexCoord.xyz;
   float3 rDir = normalize(input.TexCoord-CamPosTexSpace).xyz;
   float4 dest = float4(0, 0, 0, 0);
-  const float stepSize = 1./64.0f;
-  float3 stepDir = stepSize*rDir;
+  float3 stepDir = StepSize*rDir;
 
   bool inTexture = (p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1)&&(p.z>=0&&p.z<=1);
   while(inTexture && dest.w<0.95)
@@ -107,10 +104,7 @@ float4 PixelMainNoPreInt(VertexShaderOutput input) : COLOR0
     {      
       float s = tex3Dlod(volumeSampler, float4(p.xyz, 0)).w;            
       float4 src = tex1Dlod(tfSampler, float4(s, 0, 0, 0));      
-      
       dest = dest+(1-dest.w)*src;      
-      //dest.xyz = dest.xyz+(1-dest.w)*src.xyz*src.w;      
-      //dest.w = dest.w+(1-dest.w)*src.w;      
       p += stepDir;
       inTexture = (p.x>=0&&p.x<=1)&&(p.y>=0&&p.y<=1)&&(p.z>=0&&p.z<=1);            
     }
@@ -119,20 +113,7 @@ float4 PixelMainNoPreInt(VertexShaderOutput input) : COLOR0
   return dest;  
 }
 
-technique VolumeRayCast
-{
-    pass Pass1
-    {
-      AlphaBlendEnable = FALSE;
-      SrcBlend = SRCALPHA;
-      DestBlend = INVSRCALPHA;
-
-      VertexShader = compile vs_3_0 VertexMain();
-      PixelShader = compile ps_3_0 PixelMain();
-    }
-}
-
-technique VolumeRayCastNoPreInt
+technique VolumeRayCastPreIntegration
 {
     pass Pass1
     {
@@ -141,6 +122,19 @@ technique VolumeRayCastNoPreInt
       DestBlend = INVSRCALPHA;
 
       VertexShader = compile vs_3_0 VertexMain();
-      PixelShader = compile ps_3_0 PixelMainNoPreInt();
+      PixelShader = compile ps_3_0 PixelMainPreIntegration();
+    }
+}
+
+technique VolumeRayCastNoPreIntegration
+{
+    pass Pass1
+    {
+      AlphaBlendEnable = TRUE;
+      SrcBlend = SRCALPHA;
+      DestBlend = INVSRCALPHA;
+
+      VertexShader = compile vs_3_0 VertexMain();
+      PixelShader = compile ps_3_0 PixelMainNoPreIntegration();
     }
 }

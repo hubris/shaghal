@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace VolumeRendering
+namespace Shaghal
 {
-    class TransferFunction
+    public class TransferFunction
     {
         private Color[] _colors;
         private Color[] _preIntTable = new Color[256*256];

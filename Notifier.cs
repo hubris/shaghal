@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace VolumeRendering
+namespace Shaghal
 {
     /// <summary>
     /// Manage a list of listener to the given interface

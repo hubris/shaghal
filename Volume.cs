@@ -1,7 +1,7 @@
 ﻿
-namespace VolumeRendering
+namespace Shaghal
 {
-    struct Dim3
+    public struct Dim3
     {
         private int width;
         private int height;
@@ -33,7 +33,7 @@ namespace VolumeRendering
         }
     };
 
-    class Volume<T>
+    public class Volume<T>
     {
         public Volume(T[] data, Dim3 dim)
         {

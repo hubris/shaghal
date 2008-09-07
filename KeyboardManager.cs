@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace VolumeRendering
+namespace Shaghal
 {
     public interface IKeyboardListener
     {
@@ -11,7 +11,7 @@ namespace VolumeRendering
         void onKeyDown(Keys key);
     }
 
-    class KeyboardManager : Notifier<IKeyboardListener>
+    public class KeyboardManager : Notifier<IKeyboardListener>
     {
         private KeyboardState _keyboardState;
         private KeyboardState _prevKeyboardState;

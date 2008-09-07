@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace VolumeRendering
+namespace Shaghal
 {
-    class Camera : GameComponent
+    public class Camera : GameComponent
     {
         protected Game _game;
         protected Matrix _view = new Matrix();

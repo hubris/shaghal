@@ -3,9 +3,9 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using System.Globalization;
 
-namespace VolumeRendering
+namespace Shaghal
 {
-    class DatReader
+    public class DatReader
     {
         private bool _read = false;
         private string _fileName;

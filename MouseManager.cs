@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace VolumeRendering
+namespace Shaghal
 {
     public interface IMouseListener
     {
@@ -17,6 +18,7 @@ namespace VolumeRendering
     {
         private MouseState _mouseState;
         private MouseState _prevMouseState;
+        private GraphicsDevice _graphics;
 
         public enum MouseButton
         {
@@ -29,6 +31,8 @@ namespace VolumeRendering
             : base(game)
         {
             game.Services.AddService(typeof(MouseManager), this);
+            _graphics = game.GraphicsDevice;
+
             _mouseState = _prevMouseState = Mouse.GetState();
         }
 
@@ -36,6 +40,8 @@ namespace VolumeRendering
         {
             _prevMouseState = _mouseState;
             _mouseState = Mouse.GetState();
+            
+            //Mouse.SetPosition(_graphics.Viewport.Width / 2, _graphics.Viewport.Height / 2);
 
             base.Update(gameTime);
         }

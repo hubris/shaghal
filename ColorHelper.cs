@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
 
-namespace VolumeRendering
+namespace Shaghal
 {
     public static class ColorHelper
     {

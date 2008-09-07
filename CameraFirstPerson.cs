@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace VolumeRendering
+namespace Shaghal
 {
-    class CameraFirstPerson : Camera, IMouseListener
+    public class CameraFirstPerson : Camera, IMouseListener
     {
         MouseManager _mouseManager;
         KeyboardManager _keyboard;
@@ -41,16 +41,21 @@ namespace VolumeRendering
 
         public override void Update(GameTime gameTime)
         {
-            float scale = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-            scale = 0.001f;
-            if (_keyboard.isDown(Keys.Up))
-                MoveAlongView(10.0f * scale);                
-            if (_keyboard.isDown(Keys.Down))
-                MoveAlongView(-10.0f * scale);
-            if (_keyboard.isDown(Keys.Left))
-                MoveAlongSide(10.0f * scale);
-            if (_keyboard.isDown(Keys.Right))
-                MoveAlongSide(-10.0f * scale);                                
+            float elapsedTime = gameTime.ElapsedGameTime.Milliseconds/1000.0f;
+
+            float speed = 0.1f;
+
+            if (_keyboard.isDown(Keys.LeftShift))
+                speed *= 8;
+
+            if (_keyboard.isDown(Keys.Z))
+                MoveAlongView(speed);                
+            if (_keyboard.isDown(Keys.S))
+                MoveAlongView(-speed);
+            if (_keyboard.isDown(Keys.Q))
+                MoveAlongSide(speed);
+            if (_keyboard.isDown(Keys.D))
+                MoveAlongSide(-speed);                                
             base.Update(gameTime);
         }
 
@@ -79,8 +84,8 @@ namespace VolumeRendering
             if (_game.IsMouseVisible)
                 return;
             
-            UpdateYaw(-deltaPos.X);
-            UpdatePitch(-deltaPos.Y);
+            UpdateYaw(-deltaPos.X*0.2f);
+            UpdatePitch(-deltaPos.Y*0.2f);                        
         }
 
         public void onButtonPressed(MouseManager.MouseButton button)

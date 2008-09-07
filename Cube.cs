@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace VolumeRendering
+namespace Shaghal
 {
-    class Cube
+    public class Cube
     {
         /**********************************************************************/
         public Cube(GraphicsDevice device, BoundingBox box)
