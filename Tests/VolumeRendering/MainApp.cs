@@ -30,7 +30,8 @@ namespace VolumeRendering
         Vector2 curPos;
 
         public MainApp()
-        {            
+        {
+            Shaghal.GlobalSystem.Init(this);
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 

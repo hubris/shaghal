@@ -79,7 +79,7 @@ namespace Shaghal
 
         protected override void LoadContent()
         {
-            effect = Game.Content.Load<Effect>("VolumeRayCast");
+            effect = GlobalSystem.Content.Load<Effect>("VolumeRayCast");
             effect.Parameters["VolTexture"].SetValue(_volTexture);
             effect.Parameters["TransferFunction"].SetValue(_tfTexture);
         }
