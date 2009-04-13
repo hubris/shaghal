@@ -67,14 +67,12 @@ namespace VolumeRendering
             Components.Add(_mouseManager);
             _mouseManager.AddListener(this);
 
-            _camera = new CameraFirstPerson(this, 45, 0.0001f, 100.0f);
+            _camera = new CameraFirstPerson(this, 45, 0.01f, 100.0f);
             _camera.Position = new Vector3(0, 0, 5);
             Components.Add(_camera);
 
             createVolumeRaycaster();
-            _gradEditor = new GradientEditor();
-            _gradEditor.Show();
-
+            _gradEditor = new GradientEditor();            
 
             _gradient = new Gradient();
             GradientSegment seg = new GradientSegment();
@@ -116,6 +114,8 @@ namespace VolumeRendering
             tf.Colors = cols;
             tf.preIntegrate();
             _vrc.TransferFunctionPreInt = tf;
+
+            _gradEditor.Show();
 
             base.Initialize();
         }
