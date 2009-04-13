@@ -126,11 +126,13 @@ namespace VolumeRendering
         private void createVolumeRaycaster()
         {
             //DatReader datReader = new DatReader("C:/Users/gandalf/Documents/devel/csharp/VolumeRendering/VolumeRendering/Content/Volumes/Head256.dat");
-            DatReader datReader = new DatReader("C:/Users/gandalf/Documents/devel/csharp/Shaghal/Tests/VolumeRendering/Content/Volumes/Bonsai.dat");
+            DatReader datReader = new DatReader("D:/Documents/Devel/shagal/Tests/VolumeRendering/Content/Volumes/Bonsai.dat");
             _volume = new Volume<byte>(datReader.Data, datReader.Dim);
             //_volume = new Volume<byte>(createSphere(), new Dim3(256, 256, 256));
             _vrc = new VolumeRaycaster(this, _volume);
-            _vrc.Camera = _camera;
+            _vrc.Camera = _camera;            
+            _vrc.StepSize = 1.0f/512.0f;
+            _vrc.PreIntegration = false;
 
             float maxDim = MathHelper.Max(datReader.Dim.Width, datReader.Dim.Height);
             maxDim = MathHelper.Max(maxDim, datReader.Dim.Depth);
