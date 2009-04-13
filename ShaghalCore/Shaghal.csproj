@@ -78,11 +78,6 @@
     <Compile Include="Camera.cs" />
     <Compile Include="CameraFirstPerson.cs" />
     <Compile Include="ColorHelper.cs" />
-    <Compile Include="ContentResource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ContentResource.resx</DependentUpon>
-    </Compile>
     <Compile Include="Cube.cs" />
     <Compile Include="DatReader.cs" />
     <Compile Include="Gradient.cs" />
@@ -90,6 +85,11 @@
     <Compile Include="MouseManager.cs" />
     <Compile Include="Notifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ContentResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ContentResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="Shaghal.cs" />
     <Compile Include="TransferFunction.cs" />
     <Compile Include="Volume.cs" />
@@ -127,10 +127,11 @@
     <EmbeddedResource Include="ContentResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ContentResource.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="bin\x86\Debug\Content\EntryExitPointGen.xnb" />
+    <None Include="bin\x86\Debug\Content\EntryPointClip.xnb" />
     <None Include="bin\x86\Debug\Content\VolumeRayCast.xnb" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
