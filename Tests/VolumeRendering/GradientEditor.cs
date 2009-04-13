@@ -91,7 +91,8 @@ namespace VolumeRendering
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(300, 300);
+            this.tabControl1.Size = new System.Drawing.Size(207, 143);
+            this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.FillToRight;
             this.tabControl1.TabIndex = 0;
             // 
             // tabGradient
@@ -105,7 +106,7 @@ namespace VolumeRendering
             this.tabGradient.Location = new System.Drawing.Point(4, 22);
             this.tabGradient.Name = "tabGradient";
             this.tabGradient.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGradient.Size = new System.Drawing.Size(292, 274);
+            this.tabGradient.Size = new System.Drawing.Size(199, 117);
             this.tabGradient.TabIndex = 0;
             this.tabGradient.Text = "Gradient";
             this.tabGradient.UseVisualStyleBackColor = true;
@@ -181,9 +182,13 @@ namespace VolumeRendering
             // 
             // GradientEditor
             // 
-            this.ClientSize = new System.Drawing.Size(284, 264);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(210, 142);
             this.Controls.Add(this.tabControl1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "GradientEditor";
+            this.Text = "Gradient Editor";
             this.tabControl1.ResumeLayout(false);
             this.tabGradient.ResumeLayout(false);
             this.tabGradient.PerformLayout();
