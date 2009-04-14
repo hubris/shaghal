@@ -9,7 +9,7 @@ namespace Shaghal
         {
             _bbox = new BoundingBox(new Vector3(-1), new Vector3(1));
             _volume = volume;
-            _alpha = 0.5f;
+            _alpha = 1.0f;
 
             IGraphicsDeviceService graphicsservice = Game.Services.GetService(typeof(IGraphicsDeviceService)) as IGraphicsDeviceService;
             _graphicDevice = graphicsservice.GraphicsDevice;
@@ -105,8 +105,8 @@ namespace Shaghal
 
         private void setupShaderParameters()
         {
-            Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, 0 * MathHelper.Pi / 2.0f, 0);
-            //Matrix world = Matrix.CreateFromYawPitchRoll(MathHelper.Pi / 2, MathHelper.Pi / 2, 0);
+            //Matrix world = Matrix.CreateFromYawPitchRoll(_alpha, 0 * MathHelper.Pi / 2.0f, 0);
+            Matrix world = Matrix.CreateFromYawPitchRoll(MathHelper.Pi / 2, MathHelper.Pi / 2, 0);
             //Matrix world = Matrix.Identity;
             Matrix view = _camera.View;
             Matrix wvInv = Matrix.Invert(world * view);
@@ -121,11 +121,15 @@ namespace Shaghal
             _effect.Parameters["TransferFunctionPreInt"].SetValue(_tfPreIntTexture);
 
             _effect.Parameters["Alpha"].SetValue(_alpha);
-            _effect.Parameters["CamPosTexSpace"].SetValue(camPosTexSpace);
             _effect.Parameters["World"].SetValue(world);
             _effect.Parameters["View"].SetValue(_camera.View);
             _effect.Parameters["Projection"].SetValue(_camera.Projection);
             _effect.Parameters["TexGenMatrix"].SetValue(_texGenMatrix);
+
+            Vector4 deltaTex = new Vector4(1.0f/_volume.Dim.Width, 1.0f/_volume.Dim.Height, 1.0f/_volume.Dim.Depth, 0);
+            _effect.Parameters["DeltaTex"].SetValue(deltaTex);
+
+            _effect.Parameters["LightDir"].SetValue(new Vector3(0, 0, 1));
 
             _effectClip.Parameters["MVPI"].SetValue(mvpi);
             _effectClip.Parameters["TexGenMatrix"].SetValue(_texGenMatrix);
@@ -153,12 +157,12 @@ namespace Shaghal
             setupShaderParameters();
 
             RenderTarget oldTarget = _graphicDevice.GetRenderTarget(0);
-
+            
             for (int i = 0; i < 2; i++)
             {
-                _graphicDevice.SetRenderTarget(0, (i % 2 == 0) ? _tempRt : _exitPointRt);
+                _graphicDevice.SetRenderTarget(0, (i % 2 == 0) ? _tempRt : _exitPointRt);                
                 _graphicDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0), 0, 0);
-
+                
                 _cube.Begin();
                 _effectGenRay.Begin();
                 _effectGenRay.CurrentTechnique.Passes[i].Begin();
@@ -167,6 +171,7 @@ namespace Shaghal
                 _effectGenRay.End();
                 _cube.End();
             }
+            
             _graphicDevice.SetRenderTarget(0, _entryPointRt);
 
             _graphicDevice.Clear(ClearOptions.Target, new Color(0, 0, 0, 0), 0, 0);
@@ -200,7 +205,7 @@ namespace Shaghal
         public override void Draw(GameTime gameTime)
         {
             GenerateEntryPoint();
-            
+
             string technique = _preint ? "VolumeRayCastPreIntegration":"VolumeRayCastNoPreIntegration";
             _effect.CurrentTechnique = _effect.Techniques[technique];
 
@@ -211,7 +216,7 @@ namespace Shaghal
             setupShaderParameters();
 
              ApplyFullScreenEffect(_effect, entryPointTexture);
-            //debugTextures();            
+            debugTextures();            
 
             base.Draw(gameTime);
         }
@@ -219,13 +224,11 @@ namespace Shaghal
         private void debugTextures()
         {
             Rectangle destinationRectangle = new Rectangle(0, 0, 256, 256/6);
-            Texture2D tex = _entryPointRt.GetTexture();
-
+            
             _spriteBatch.Begin();
             Vector2 pos = new Vector2(0, 0);
             _spriteBatch.Draw(_tfTexture, destinationRectangle, Color.White);
-            _spriteBatch.Draw(_tfPreIntTexture, new Vector2(0, 256), Color.White);
-            _spriteBatch.Draw(tex, new Vector2(0, 0), Color.White);
+            _spriteBatch.Draw(_tfPreIntTexture, new Vector2(0, 256), Color.White);            
             _spriteBatch.End();
         }
 
