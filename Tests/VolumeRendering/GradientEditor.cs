@@ -20,7 +20,13 @@ namespace VolumeRendering
         private TabPage tabGradient;
 
         private Gradient _gradient;
+        private TabPage tabPage1;
+        private Button buttonColor;
         private Microsoft.Xna.Framework.Graphics.Color[] _gradColors;
+        private NumericUpDown numericUpDown1;
+        private TrackBar trackBarAlpha;
+
+        private Microsoft.Xna.Framework.Graphics.Color _matColor;
 
         public Microsoft.Xna.Framework.Graphics.Color[] GradColors
         {
@@ -34,6 +40,11 @@ namespace VolumeRendering
             { 
                 _gradient = value;                
             }
+        }
+
+        public Microsoft.Xna.Framework.Graphics.Color MaterialColor
+        {
+            get { return _matColor; }
         }
 
         public GradientEditor()
@@ -77,17 +88,25 @@ namespace VolumeRendering
             this.numericUpDownMin = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.trackBarMin = new System.Windows.Forms.TrackBar();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.trackBarAlpha = new System.Windows.Forms.TrackBar();
+            this.buttonColor = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabGradient.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMin)).BeginInit();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarAlpha)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabGradient);
+            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -169,7 +188,6 @@ namespace VolumeRendering
             this.label1.Size = new System.Drawing.Size(24, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Min";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // trackBarMin
             // 
@@ -180,12 +198,52 @@ namespace VolumeRendering
             this.trackBarMin.TabIndex = 0;
             this.trackBarMin.TickStyle = System.Windows.Forms.TickStyle.None;
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.numericUpDown1);
+            this.tabPage1.Controls.Add(this.trackBarAlpha);
+            this.tabPage1.Controls.Add(this.buttonColor);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(199, 117);
+            this.tabPage1.TabIndex = 1;
+            this.tabPage1.Text = "Material";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(131, 35);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(40, 20);
+            this.numericUpDown1.TabIndex = 2;
+            // 
+            // trackBarAlpha
+            // 
+            this.trackBarAlpha.Location = new System.Drawing.Point(8, 35);
+            this.trackBarAlpha.Maximum = 255;
+            this.trackBarAlpha.Name = "trackBarAlpha";
+            this.trackBarAlpha.Size = new System.Drawing.Size(117, 45);
+            this.trackBarAlpha.TabIndex = 1;
+            this.trackBarAlpha.TickFrequency = 16;
+            this.trackBarAlpha.ValueChanged += new System.EventHandler(this.trackBarAlpha_ValueChanged);
+            // 
+            // buttonColor
+            // 
+            this.buttonColor.Location = new System.Drawing.Point(8, 6);
+            this.buttonColor.Name = "buttonColor";
+            this.buttonColor.Size = new System.Drawing.Size(75, 23);
+            this.buttonColor.TabIndex = 0;
+            this.buttonColor.Text = "Color";
+            this.buttonColor.UseVisualStyleBackColor = true;
+            this.buttonColor.MouseClick += new System.Windows.Forms.MouseEventHandler(this.buttonColor_MouseClick);
+            // 
             // GradientEditor
             // 
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(210, 142);
             this.Controls.Add(this.tabControl1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.Name = "GradientEditor";
             this.Text = "Gradient Editor";
@@ -196,11 +254,22 @@ namespace VolumeRendering
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMin)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarAlpha)).EndInit();
             this.ResumeLayout(false);
 
         }
+        private void buttonColor_MouseClick(object sender, MouseEventArgs e)
+        {
+            ColorDialog diag = new ColorDialog();
+            diag.ShowDialog();
+            Color col = diag.Color;
+            _matColor = new Microsoft.Xna.Framework.Graphics.Color(col.R, col.G, col.B, trackBarAlpha.Value);
+        }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void trackBarAlpha_ValueChanged(object sender, EventArgs e)
         {
 
         }

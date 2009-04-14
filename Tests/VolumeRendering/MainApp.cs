@@ -2,6 +2,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+//using System.Drawing;
+//using System.ComponentModel;
+//using System.Windows.Forms;
 using Shaghal;
 
 namespace VolumeRendering
@@ -31,10 +34,10 @@ namespace VolumeRendering
 
         public MainApp()
         {
-            Shaghal.GlobalSystem.Init(this);
-            graphics = new GraphicsDeviceManager(this);
+            Shaghal.GlobalSystem.Init(this);            
+            graphics = new GraphicsDeviceManager(this);            
             Content.RootDirectory = "Content";
-
+                       
             graphics.SynchronizeWithVerticalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = true;
@@ -104,7 +107,7 @@ namespace VolumeRendering
             //seg.RightColor = ColorHelper.HsvToRgb(0.25f * 360.0f, 0, 1.0f, 1);
             //seg.ColType = GradientSegment.ColorType.HSV_CW;
             //_gradient.AddSegment(seg);
-
+  
             _gradEditor.Gradient = _gradient;
 
             Color[] cols = _gradient.GetColors(256);            
@@ -117,6 +120,9 @@ namespace VolumeRendering
 
             _gradEditor.Show();
 
+            VolumeRaycasterSettings raySettings = new VolumeRaycasterSettings(_vrc);
+            raySettings.Show();
+
             base.Initialize();
         }
 
@@ -126,12 +132,12 @@ namespace VolumeRendering
         private void createVolumeRaycaster()
         {
             //DatReader datReader = new DatReader("C:/Users/gandalf/Documents/devel/csharp/VolumeRendering/VolumeRendering/Content/Volumes/Head256.dat");
-            DatReader datReader = new DatReader("D:/Documents/Devel/shagal/Tests/VolumeRendering/Content/Volumes/Bonsai.dat");
+            DatReader datReader = new DatReader("D:/Documents/Devel/shagal/Tests/VolumeRendering/Content/Volumes/Head256.dat");
             _volume = new Volume<byte>(datReader.Data, datReader.Dim);
             //_volume = new Volume<byte>(createSphere(), new Dim3(256, 256, 256));
             _vrc = new VolumeRaycaster(this, _volume);
             _vrc.Camera = _camera;            
-            _vrc.StepSize = 1.0f/512.0f;
+            _vrc.StepSize = 1.0f/256.0f;
             _vrc.PreIntegration = false;
 
             float maxDim = MathHelper.Max(datReader.Dim.Width, datReader.Dim.Height);
