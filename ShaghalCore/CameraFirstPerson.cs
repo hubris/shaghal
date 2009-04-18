@@ -11,7 +11,9 @@ namespace Shaghal
 
         Vector3 _maxYawPitchRoll = new Vector3(360, 360, 360);
         Vector3 _minYawPitchRoll = new Vector3(-360, -360, -360);
-        
+
+        Vector2 _screenCenter;
+
         public CameraFirstPerson(Game game, float fov, float zNear, float zFar)
             : base(game, fov, zNear, zFar)
         {
@@ -83,9 +85,13 @@ namespace Shaghal
         {
             if (_game.IsMouseVisible)
                 return;
-            
-            UpdateYaw(-deltaPos.X*0.2f);
-            UpdatePitch(-deltaPos.Y*0.2f);                        
+                     
+            MouseState mouseState = Mouse.GetState();
+            Vector2 delta = new Vector2(mouseState.X - _screenCenter.X,
+                                        mouseState.Y - _screenCenter.Y);
+            UpdateYaw(-delta.X * 0.2f);
+            UpdatePitch(-delta.Y * 0.2f);
+            Mouse.SetPosition((int)_screenCenter.X, (int)_screenCenter.Y);
         }
 
         public void onButtonPressed(MouseManager.MouseButton button)
@@ -95,7 +101,12 @@ namespace Shaghal
         public void onButtonReleased(MouseManager.MouseButton button)
         {
             if (button == MouseManager.MouseButton.RIGHT)
-                _game.IsMouseVisible = !_game.IsMouseVisible;            
+            {
+                _game.IsMouseVisible = !_game.IsMouseVisible;
+                Rectangle rec = _game.Window.ClientBounds;                
+                _screenCenter = new Vector2(rec.Width / 2, rec.Height / 2);
+                Mouse.SetPosition((int)_screenCenter.X, (int)_screenCenter.Y);                
+            }
         }
 
         public void onWheelScroll(int delta)
