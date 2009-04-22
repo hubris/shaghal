@@ -10,9 +10,9 @@ namespace Shaghal
         protected Matrix _projection = new Matrix();
         protected GraphicsDevice _graphics;
 
-        private float _zNear;
-        private float _zFar;
-        private float _fov;
+        protected float _zNear;
+        protected float _zFar;
+        protected float _fov;
 
         protected Vector3 _position = new Vector3(0.0f, 0.0f, 1.0f);
         protected Vector3 _target = Vector3.Zero;
@@ -21,6 +21,8 @@ namespace Shaghal
         protected float _yaw = 0;
         protected float _pitch = 0;
         protected float _roll = 0;
+
+        protected Vector2 _screenCenter;
 
         protected Quaternion _orientation = new Quaternion(0, 0, 0, 1);
 
@@ -61,14 +63,19 @@ namespace Shaghal
         {
             base.Initialize();
             createMatrix();
+            Rectangle rec = _game.Window.ClientBounds;
+            _screenCenter = new Vector2(rec.Width / 2, rec.Height / 2);
         }
 
-        private void createMatrix()
+        protected virtual void createProjectionMatrix()
         {
             float aspectRatio = (float)_graphics.Viewport.Width / (float)_graphics.Viewport.Height;
             _projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(_fov), aspectRatio,
                                                               _zNear, _zFar);
+        }
 
+        protected virtual void createViewMatrix()
+        {
             Quaternion qPitch = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(_pitch));
             Quaternion qYaw = Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathHelper.ToRadians(_yaw));
             _orientation = qYaw*qPitch;
@@ -77,6 +84,12 @@ namespace Shaghal
             _view = Matrix.CreateFromQuaternion(_orientation);
             _view.Translation = _position;
             Matrix.Invert(ref _view, out _view);
+        }
+
+        private void createMatrix()
+        {
+            createProjectionMatrix();
+            createViewMatrix();
         }
 
         public override void Update(GameTime gameTime)

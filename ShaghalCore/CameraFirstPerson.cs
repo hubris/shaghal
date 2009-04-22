@@ -9,10 +9,8 @@ namespace Shaghal
         MouseManager _mouseManager;
         KeyboardManager _keyboard;
 
-        Vector3 _maxYawPitchRoll = new Vector3(360, 360, 360);
-        Vector3 _minYawPitchRoll = new Vector3(-360, -360, -360);
-
-        Vector2 _screenCenter;
+        private Vector3 _maxYawPitchRoll = new Vector3(360, 360, 360);
+        private Vector3 _minYawPitchRoll = new Vector3(-360, -360, -360);
 
         public CameraFirstPerson(Game game, float fov, float zNear, float zFar)
             : base(game, fov, zNear, zFar)
@@ -48,7 +46,7 @@ namespace Shaghal
             float speed = 0.1f;
 
             if (_keyboard.isDown(Keys.LeftShift))
-                speed *= 8;
+                speed /= 8;
 
             if (_keyboard.isDown(Keys.Z))
                 MoveAlongView(speed);                
@@ -103,8 +101,6 @@ namespace Shaghal
             if (button == MouseManager.MouseButton.RIGHT)
             {
                 _game.IsMouseVisible = !_game.IsMouseVisible;
-                Rectangle rec = _game.Window.ClientBounds;                
-                _screenCenter = new Vector2(rec.Width / 2, rec.Height / 2);
                 Mouse.SetPosition((int)_screenCenter.X, (int)_screenCenter.Y);                
             }
         }
